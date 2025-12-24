@@ -8,7 +8,6 @@ import (
 	"os"
 
 	"github.com/OnatArslan/go-rest-blog/internal/config"
-	"github.com/OnatArslan/go-rest-blog/internal/db"
 	"github.com/OnatArslan/go-rest-blog/internal/httpx"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -30,7 +29,7 @@ func main() {
 	log.Println("Database connected...")
 
 	// this db will used in sqlc repositories
-	db := db.New(pool)
+	// db := db.New(pool)
 
 	r := chi.NewRouter()
 
