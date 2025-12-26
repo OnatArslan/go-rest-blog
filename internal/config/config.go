@@ -13,12 +13,12 @@ type Config struct {
 
 func Load() *Config {
 	if err := godotenv.Load(); err != nil {
-		log.Println("no .env file found")
+		log.Fatalf("no .env file found")
 	}
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		log.Fatal("PORT is required")
+		log.Fatalf("PORT is required")
 	}
 
 	return &Config{

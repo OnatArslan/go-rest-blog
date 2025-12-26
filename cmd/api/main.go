@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/OnatArslan/go-rest-blog/internal/config"
 	"github.com/OnatArslan/go-rest-blog/internal/httpx"
@@ -18,8 +19,14 @@ func main() {
 	// Load config files
 	cfg := config.Load()
 
+	// Create context in here with 5 second timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+
+	defer cancel()
+
+	// This block for connect postgres with native pgx
 	// urlExample := "postgres://username:password@localhost:5432/database_name"
-	pool, err := pgxpool.New(context.Background(), os.Getenv("DATABASE_URL"))
+	pool, err := pgxpool.New(ctx, os.Getenv("DATABASE_URL"))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		os.Exit(1)
@@ -45,3 +52,25 @@ func main() {
 	log.Println("listening on", cfg.Port)
 	log.Fatal(http.ListenAndServe(cfg.Port, r))
 }
+
+// Example sqlc and pgx setup
+/*
+func main() {
+    // urlExample := "postgres://username:password@localhost:5432/database_name"
+    conn, err := pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
+    if err != nil {
+            fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+            os.Exit(1)
+    }
+    defer conn.Close(context.Background())
+
+    q := db.New(conn)
+
+    author, err := q.GetAuthor(context.Background(), 1)
+    if err != nil {
+            fmt.Fprintf(os.Stderr, "GetAuthor failed: %v\n", err)
+            os.Exit(1)
+    }
+
+    fmt.Println(author.Name)
+*/
